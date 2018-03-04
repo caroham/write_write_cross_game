@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dashboard</title>
+    <link href="https://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'type_type/css/style.css' %}" media="screen" title="no title"  charset="utf-8">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="navbar">
+                <a href="/dashboard">{{user.username}}</a>
+                <a href="/logout">logout</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <h1>Hi, {{user.username}}!</h1>
+                <a href="/users"><button type="button" id="new_proj_btn" class="main_btn">New project</button></a>
+                
+
+                <h2 class="pad_b">My open projects</h2>
+                <div class="pad_b">
+                    {% for project in open_projects %}
+                        <div class="project col-4">
+                            <h3 class="project_title"><a href="/projects/{{project.id}}/edit">Project {{ project.id }}</a></h3>
+                            {% if project.writer1 == user %}
+                                <p class="writer_name">collaborator: <a href="/users/{{project.writer2.id}}">{{ project.writer2.username }}</a></p>
+                            {% else %}
+                                <p class="writer_name">collaborator: <a href="/users/{{project.writer1.id}}">{{ project.writer1.username }}</a></p>
+                            {% endif %}
+                            {% if project.writer_turn == user %}
+                                <p>your turn</p>
+                            {% else %}
+                                <p>their turn</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                
+                <h2 class="pad_b">My closed projects</h2>
+                {% for project in closed_projects %}
+                    <h3 class="project_title"><a href="/projects/{{project.id}}">{{ project.title }}</a></h3>
+                    {% if project.writer1 == user %}
+                        <p class="writer_name">collaborator: <a href="/users/{{project.writer2.id}}">{{ project.writer2.username }}</a></p>
+                    {% else %}
+                        <p class="writer_name">collaborator: <a href="/users/{{project.writer1.id}}">{{ project.writer1.username }}</a></p>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+
+            <div class="col-4">
+
+                <h2>My invites</h2>
+
+                {% for invite in invites %}
+                    <div class="invite col-4">      
+                        <p class="writer_name"><a href="/users/{{invite.inviter.id}}">{{ invite.inviter.username }}</a></p>
+                        <a href="/accept/{{invite.inviter.id}}"><button type="button" class="sub_btn" >Accept</button></a>
+                    </div>
+                {% endfor %}
+                <a href="/invites/{{user.id}}/view" class="view_all pad_b">View All</a>
+
+                <h2>All users</h2>
+                <!-- randomly generate 3 users -->
+
+                {% for other_user in users %}
+                    <p class="writer_name"><a href="/users/{{other_user.id}}">{{ other_user.username }}</a></p>
+                    {% if other_user.inviting_user == user %}
+                    <a href="/invite/{{other_user.id}}"><button type="button" class="sub_btn">Invite</button></a>
+                    {% endif %}
+                {% endfor %}
+                <a href="/users" class="view_all pad_b">View All</a>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

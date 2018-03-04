@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Project {{project.id}}</title>
+    <link href="https://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'type_type/css/style.css' %}" media="screen" title="no title"  charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{% static 'type_type/js/main.js' %}"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="navbar">
+                <a href="/dashboard">{{user.username}}</a>
+                <a href="/logout">logout</a>
+            </div>
+            
+            
+            <div class="row sub_nav">
+                <h1 class="project_name">Project {{project.id}}</h1>
+                <div class="sub_nav_left">
+                    <button type="button" id="user1_btn" data="{{user.id}}" class="sm_caps user1">{{user.username}}'s edits</button>
+                    <button type="button" id="user2_btn" data="{{other_user.id}}" class="sm_caps user2">{{other_user.username}}'s edits</button>
+                </div>
+                <div class="sub_nav_right">
+                    <label class="switch">
+                        <input id="toggle_btn" type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                    <p class="toggle">toggle deleted words</p>
+                </div>
+            </div>
+            {% if project.writer_turn == user %}
+                <h3 class="row status">Your turn to {{ project.turn_move }} a word.</h3>
+            {% else %}
+                <h3 class="row status">{{ other_user.username }}'s turn to {{ project.turn_move }} a word.</h3>
+            {% endif %}
+            <div class="row word_area">
+                {% if project.writer_turn == user and project.turn_move == "delete" %}
+                <!-- generating words where live words can be deleted -->
+                    {% for word in words %}
+                        {% if word.creator == user %}
+                            {% if word.status == 1 %}
+                                <button type="button" class="wrd_btn word live user1">{{ word.word }} </button>
+                                <a href="/delete/{{project.id}}/{{word.id}}" class="del_btn" style="display:none"><button type="button">delete</button></a>
+                            {% else %}
+                                <p class="word user1 deleted" data="{{word.deleter.id}}" style="display:none">{{ word.word }} </p>
+                            {% endif %}
+                        {% else %}
+                            {% if word.status == 1 %}
+                                <button type="button" class="wrd_btn word live user2">{{ word.word }} </button>
+                                <a href="/delete/{{project.id}}/{{word.id}}" class="del_btn" style="display:none"><button type="button">delete</button></a>
+                            {% else %}
+                                <p class="word user2 deleted" data="{{word.deleter.id}}" style="display:none">{{ word.word }} </p>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                {% else %}
+                    <!-- generating words that can't be interacted with -->
+                    {% for word in words %}
+                        {% if word.creator == user %}
+                            {% if word.status == 1 %}
+                                <p class="word live user1">{{ word.word }} </p>
+                            {% else %}
+                                <p class="word deleted user1">{{ word.word }} </p>
+                            {% endif %}
+                        {% else %}
+                            {% if word.status == 1 %}
+                                <p class="word live user2">{{ word.word }} </p>
+                            {% else %}
+                                <p class="word deleted user2">{{ word.word }} </p>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                <!-- form for creating/adding a word -->
+                {% if project.writer_turn == user and project.turn_move == "add" %}
+
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <form action="/projects/{{project.id}}/add_word" method="post">
+                        {% csrf_token %}
+                        <input type="text" class="word_input" name="word">
+                        <input type="hidden" name="project_id" value="{{project.id}}">
+                        <input type="hidden" name="user_id" value="{{user.id}}">
+                        <input type="submit" class="main_btn" value="add word">
+                    </form>
+
+                {% endif %}
+                        
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Users</title>
+    <link href="https://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'type_type/css/style.css' %}" media="screen" title="no title"  charset="utf-8">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="navbar">
+                <a href="/dashboard">{{user.username}}</a>
+                <a href="/logout">logout</a>
+            </div>
+            <h1>Users</h1>
+            <div class="list">
+            {% for user in users %}
+                <div class="list_item">
+                    <p class="user">{{user.username}}</p>
+                    {% if user.invited_user == session_user %}
+                        <a href="/accept/{{user.id}}">accept invite</a>
+                    {% endif %}
+                    {% if user.inviting_user != session_user %}
+                        <a href="/invite/{{user.id}}">invite user to project</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

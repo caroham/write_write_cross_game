@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Register/Login</title>
+    <link href="https://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'type_type/css/style.css' %}" media="screen" title="no title"  charset="utf-8">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <h1>Register</h1>
+                
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                    
+                <form class="reg_log" action="/register" method="post">
+                    {% csrf_token %}
+                    <label for="username">Username: <input type="text" name="username"></label>
+                    <label for="pw">Password: <input type="password" name="pw"></label>
+                    <label for="pw_confirm">Confirm Password: <input type="password" name="pw_confirm"></label>
+                    <input type="submit" value="Register" class="main_btn">
+                </form>
+            </div>
+
+            <div class="col-6">
+                <h1>Login</h1>
+                    
+                <form class="reg_log" action="/login" method="post">
+                    {% csrf_token %}
+                    <label for="username">Username: <input type="text" name="username"></label>
+                    <label for="pw">Password: <input type="password" name="pw"></label>
+                    <input type="submit" value="Login" class="main_btn">
+                </form>  
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>
